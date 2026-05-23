@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KIIP Level 4 Lesson 3 Quiz</title>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@300;400;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables synchronized with Android App or using custom premium dark theme as default */
+        :root {
+            --primary-color: #FFC107;
+            --bg-color: #0A0E1A;
+            --text-color: #FFFFFF;
+            --card-bg: #161B2E;
+            --correct-color: #10B981;
+            --incorrect-color: #EF4444;
+            --text-secondary: #94A3B8;
+        }
+
+        /* Support light/dark mode based on Android App setting */
+        body.light-mode {
+            --primary-color: #D97706;
+            --bg-color: #F8FAFC;
+            --text-color: #0F172A;
+            --card-bg: #FFFFFF;
+            --text-secondary: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Noto Sans KR', 'Hanuman', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Premium Mobile Layout Container */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        /* Header Style */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 16px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, var(--primary-color), #FF9800);
+            color: #000;
+            font-weight: 900;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+        }
+
+        .score-board {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* Card container */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        /* Question style */
+        .question-meta {
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.5;
+            word-break: keep-all;
+        }
+
+        /* Helper Translation text (Initially hidden unless powerup used or answered) */
+        .translation-box {
+            background-color: rgba(148, 163, 184, 0.05);
+            border-left: 4px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 4px 12px 12px 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .reading-box {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        /* TTS Audio Controller container */
+        .audio-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn-audio {
+            background-color: rgba(255, 193, 7, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 48px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-audio:active {
+            transform: scale(0.95);
+            background-color: rgba(255, 193, 7, 0.2);
+        }
+
+        .btn-audio.playing {
+            background-color: var(--primary-color);
+            color: #000;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,193,7, 0.4); }
+            100% { transform: scale(1.03); box-shadow: 0 0 10px 4px rgba(255,193,7, 0.2); }
+        }
+
+        /* Helper game powerups */
+        .powerups-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn-powerup {
+            background-color: rgba(148, 163, 184, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 52px;
+        }
+
+        .btn-powerup:active:not(:disabled) {
+            transform: scale(0.95);
+            background-color: rgba(148, 163, 184, 0.15);
+        }
+
+        .btn-powerup:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-powerup.active {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--primary-color);
+        }
+
+        .powerup-count {
+            background-color: rgba(148, 163, 184, 0.2);
+            color: var(--text-color);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        .active .powerup-count {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+
+        /* Option buttons */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-option {
+            background-color: rgba(148, 163, 184, 0.05);
+            border: 2px solid rgba(148, 163, 184, 0.15);
+            color: var(--text-color);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            width: 100%;
+            min-height: 54px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .btn-option:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .btn-option:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 193, 7, 0.03);
+        }
+
+        .btn-option.correct {
+            border-color: var(--correct-color) !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            color: var(--correct-color) !important;
+            font-weight: 700;
+        }
+
+        .btn-option.incorrect {
+            border-color: var(--incorrect-color) !important;
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            color: var(--incorrect-color) !important;
+        }
+
+        .btn-option.eliminated {
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .option-translation {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.2);
+            padding-top: 4px;
+            width: 100%;
+        }
+
+        /* Smart Reveal Section (Explains details after answer) */
+        .reveal-section {
+            background-color: rgba(148, 163, 184, 0.03);
+            border-top: 2px solid rgba(148, 163, 184, 0.1);
+            padding: 20px 0 0 0;
+            margin-top: 20px;
+        }
+
+        .explanation-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        /* Vocab list breakdown */
+        .vocab-breakdown {
+            background-color: rgba(148, 163, 184, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .vocab-item {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .vocab-item:last-child {
+            border-bottom: none;
+        }
+
+        .vocab-korean {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+
+        .vocab-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Bottom Controls (Next, Result, Back to Home) */
+        .controls-container {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+            padding-bottom: 20px;
+        }
+
+        .btn-action {
+            flex: 1;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            text-align: center;
+            min-height: 48px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15);
+        }
+
+        .btn-action:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        /* Result View */
+        .result-view {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .result-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid var(--primary-color);
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            background-color: rgba(255, 193, 7, 0.05);
+        }
+
+        .result-score {
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        .result-text {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .result-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        /* Review list container */
+        .review-list {
+            margin-top: 24px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .review-item {
+            background-color: rgba(148, 163, 184, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ccc;
+        }
+
+        .review-item.correct {
+            border-left-color: var(--correct-color);
+        }
+
+        .review-item.incorrect {
+            border-left-color: var(--incorrect-color);
+        }
+
+        /* Custom Scrollbar for review */
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .review-list::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.05);
+        }
+        .review-list::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 3px;
+        }
+
+        /* Traditional Ondol Diagram representation */
+        .diagram-container {
+            margin: 16px 0;
+            padding: 16px;
+            background-color: rgba(255, 193, 7, 0.02);
+            border: 1px dashed rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .diagram-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .diagram-badge {
+            background-color: rgba(148, 163, 184, 0.1);
+            color: var(--text-color);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Reading Comprehension Passage Container */
+        .passage-box {
+            background-color: rgba(255, 193, 7, 0.02);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .passage-translation {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.2);
+        }
+
+        .passage-reading {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div>
+                <span class="level-badge" id="levelBadge">KIIP LV4 · L3</span>
+            </div>
+            <div class="score-board">
+                ពិន្ទុ: <span id="currentScore" style="color: var(--primary-color);">0</span>/<span id="totalQuestions">30</span>
+            </div>
+        </header>
+
+        <!-- Main Quiz View Container -->
+        <main id="viewContainer">
+            <!-- Dynamically populated via Javascript -->
+        </main>
+
+        <!-- Bottom Controls -->
+        <div class="controls-container">
+            <button id="btnAction" class="btn-action" disabled onclick="quizManager.handleAction()">ពិនិត្យចម្លើយ</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions array (30 premium curated questions for Level 4 Lesson 3 - 생활 속의 과학)
+        const quizQuestions = [
+            // PART 1: VOCABULARY & GRAMMAR (Q1 - Q10)
+            {
+                id: 1,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "어제 날씨가 춥지 않아서 정우 씨가 외출을 (      ) 줄 알았어요.",
+                translation: "ដោយសារម្សិលមិញធាតុអាកាសមិនត្រជាក់ ខ្ញុំស្មានថាជុងអ៊ូបានចេញទៅក្រៅបាត់ទៅហើយ។",
+                reading: "អរ-ជេ ណាល-ស៊ី-ហ្កា ឈុប-ជី អា-ណា-សរ ជុង-អ៊ូ ស៊ី-ហ្កា វ៉េ-ឈុល-រ៉ឺល (      ) ជុល អា-រ៉ា-សូ-យ៉ូ។",
+                options: ["한", "할", "하는", "하곤 한"],
+                optionsTrans: ["បានធ្វើ (អតីតកាល)", "នឹងធ្វើ (អនាគតកាល)", "កំពុងធ្វើ (បច្ចុប្បន្នកាល)", "ធ្លាប់តែធ្វើ"],
+                answer: 0,
+                explanation: "ទម្រង់វេយ្យាករណ៍ `-은/ㄴ 줄 알았다` ប្រើជាមួយកិរិយាសព្ទដើម្បីបង្ហាញការស្មានអំពីសកម្មភាពក្នុងអតីតកាល (ស្មានថាបានធ្វើរួចហើយ តែការពិតមិនទាន់ធ្វើទេ)។",
+                vocab: [
+                    { korean: "외출", reading: "វ៉េ-ឈុល", translation: "ការចេញទៅក្រៅ" },
+                    { korean: "-은/ㄴ 줄 알다", reading: "អ៊ឺន/ន ជុល អាល-ដា", translation: "ស្មានថា (អតីតកាល)" },
+                    { korean: "날씨", reading: "ណាល-ស៊ី", translation: "ធាតុអាកាស" }
+                ]
+            },
+            {
+                id: 2,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "저는 스트레스를 많이 받을 때면 매운 음식을 (      ).",
+                translation: "ខ្ញុំតែងតែញ៉ាំអាហារហឹររាល់ពេលដែលខ្ញុំមានស្ត្រេសខ្លាំង។",
+                reading: "ចូ-នឺន ស៊ឺ-ថឺ-រេ-ស៊ឺ-រ៉ឺល ម៉ាន-ហ៊ី បា-ឌឺល តេ-ម្យ៉ន ម៉េ-អ៊ុន អ៊ឹម-ស៊ីក-គឹល (      )។",
+                options: ["먹곤 해요", "먹는 줄 알아요", "먹는 편이에요", "먹을 뻔했어요"],
+                optionsTrans: ["តែងតែញ៉ាំ/ជាទម្លាប់", "ស្មានតែញ៉ាំ", "រាងញ៉ាំច្រើនដែរ", "ស្ទើរតែបានញ៉ាំ"],
+                answer: 0,
+                explanation: "វេយ្យាករណ៍ `-곤 하다` ប្រើដើម្បីបង្ហាញពីសកម្មភាពដែលតែងតែកើតឡើងដដែលៗ ឬជាទម្លាប់ជាប្រចាំ (តែងតែធ្វើ.../ជាញឹកញាប់...)។",
+                vocab: [
+                    { korean: "스트레스", reading: "ស៊ឺ-ថឺ-រេ-ស៊ឺ", translation: "ភាពតានតឹង/ស្ត្រេស" },
+                    { korean: "매운 음식", reading: "ម៉េ-អ៊ុន អ៊ឹម-ស៊ីក", translation: "អាហារហឹរ" },
+                    { korean: "-곤 하다", reading: "កូន ហា-ដា", translation: "តែងតែ/ជារឿយៗ" }
+                ]
+            },
+            {
+                id: 3,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "과학자들은 매일 실험실에서 연구를 하며 새로운 원리를 (      ).",
+                translation: "អ្នកវិទ្យាសាស្ត្រធ្វើការស្រាវជ្រាវនៅក្នុងបន្ទប់ពិសោធន៍ជារៀងរាល់ថ្ងៃ ដើម្បីរកឃើញគោលការណ៍ថ្មីៗ។",
+                reading: "ក្វា-ហាក់-ចា-ឌឺ-រ៉ឺន ម៉េ-អ៊ីល ស៊ីល-ហ្វម-ស៊ីល-អេសរ យ៉ន់-ហ្គូ-រ៉ឺល ហាម្យ៉ូ សេ-រ៉ូ-អ៊ុន វ៉ុន-រី-រ៉ឺល (      )។",
+                options: ["발견합니다", "발명합니다", "배출합니다", "유도합니다"],
+                optionsTrans: ["រកឃើញ (Discover)", "បង្កើតថ្មី (Invent)", "បញ្ចេញចោល", "ណែនាំ/ដឹកនាំ"],
+                answer: 0,
+                explanation: "ពាក្យ '발견하다' មានន័យថា 'រកឃើញ' អ្វីមួយដែលមានស្រាប់ក្នុងធម្មជាតិ (ដូចជាច្បាប់ ឬគោលការណ៍) ខុសពី '발명하다' ដែលមានន័យថា 'បង្កើតថ្មី' (ដូចជាឧបករណ៍)។",
+                vocab: [
+                    { korean: "발견하다", reading: "បាល់-ក្យន់-ហា-ដា", translation: "រកឃើញ/ស្វែងរកឃើញ" },
+                    { korean: "실험실", reading: "ស៊ីល-ហ្វម-ស៊ីល", translation: "បន្ទប់ពិសោធន៍" },
+                    { korean: "원리", reading: "វ៉ុន-រី", translation: "គោលការណ៍/ទ្រឹស្តី" }
+                ]
+            },
+            {
+                id: 4,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "가: 왜 그렇게 열심히 청소해요?<br>나: 주말에 친구들이 우리 집에 (      ) 청소 좀 해 놨어요.",
+                translation: "가: ហេតុអ្វីបានជាសម្អាតផ្ទះយ៉ាងសស្រាក់សស្រាំម្ល៉េះ?<br>나: ខ្ញុំបានសម្អាតផ្ទះទុកជាមុន ព្រោះស្មានតែមិត្តភក្តិនឹងមកលេងផ្ទះរបស់ខ្ញុំនៅចុងសប្តាហ៍។",
+                reading: "가: វ៉េ គឺ-រ៉ក-គេ យ៉ល-ស៊ីម-ហ៊ី ឆុង-សូ-ហេ-យ៉ូ? 나: ជូ-ម៉ាល-រ៉េ ឈីន-ហ្គូ-ឌឺ-រី អ៊ូ-រី ជី-បេ (      ) ឆុង-សូ ចុំ ហេ ណ្វា-សូ-យ៉ូ។",
+                options: ["오는 줄 알고", "오곤 해서", "오느라고", "올수록"],
+                optionsTrans: ["ព្រោះស្មានតែមក", "ព្រោះតែងតែមក", "ដោយសាររវល់តែមក", "កាន់តែមក កាន់តែ..."],
+                answer: 0,
+                explanation: "ទម្រង់ `-는 줄 알고` ប្រើដើម្បីបង្ហាញពីមូលហេតុដែលផ្អែកលើការស្មាន ឬការយល់ច្រឡំរបស់ខ្លួនក្នុងចិត្ត (គិតស្មានថា... ទើបបានជាធ្វើបែបនេះ)។",
+                vocab: [
+                    { korean: "청소하다", reading: "ឆុង-សូ-ហា-ដា", translation: "សម្អាតផ្ទះ" },
+                    { korean: "해 놓다", reading: "ហេ ណូថា", translation: "ធ្វើទុកជាមុន" },
+                    { korean: "-는 줄 알고", reading: "នឺន ជុល អាល-ហ្គោ", translation: "ដោយសារស្មានតែ..." }
+                ]
+            },
+            {
+                id: 5,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "에디슨은 인류의 삶을 편리하게 만든 전구를 (      ) 대표적인 인물이다.",
+                translation: "អេឌីសុន គឺជាបុគ្គលគំរូដ៏លេចធ្លោម្នាក់ ដែលបានបង្កើតអំពូលភ្លើង ដែលធ្វើឱ្យជីវិតមនុស្សជាតិមានភាពងាយស្រួល។",
+                reading: "អេ-ឌី-ស៊ុន-អឺន អ៊ីន-រ្យូ-អ៊ី សាម-អ៊ឺល ភ្យន់-រី-ហា-គេ ម៉ាន-ឌឺន ជុន-ហ្គូ-រ៉ឺល (      ) ទេ-ផ្យូ-ចុក-អ៊ីន អ៊ីន-មុល-អ៊ី-ដា។",
+                options: ["발명한", "발견한", "관찰한", "예측한"],
+                optionsTrans: ["បង្កើតថ្មី (Invent)", "រកឃើញ (Discover)", "សង្កេត", "ទស្សន៍ទាយ/ប៉ាន់ស្មាន"],
+                answer: 0,
+                explanation: "អំពូលភ្លើង (전구) គឺជាវត្ថុថ្មីដែលមិនធ្លាប់មានពីមុនមក ដូច្នេះត្រូវប្រើកិរិយាសព្ទ '발명하다' (បង្កើតថ្មី/បង្កើតឡើង)។",
+                vocab: [
+                    { korean: "전구", reading: "ជុន-ហ្គូ", translation: "អំពូលភ្លើង" },
+                    { korean: "발명하다", reading: "បាល់-ម្យ៉ង-ហា-ដា", translation: "បង្កើតថ្មី (ម៉ាស៊ីន/ឧបករណ៍)" },
+                    { korean: "인물", reading: "អ៊ីន-មុល", translation: "បុគ្គល/មនុស្សល្បីល្បាញ" }
+                ]
+            },
+            {
+                id: 6,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "어릴 적에는 저녁을 먹고 나서 동네 골목에서 친구들과 숨바꼭질을 (      ) 했다.",
+                translation: "កាលពីនៅក្មេង ខ្ញុំតែងតែលេងលាក់ខ្លួន (លាក់ដី) ជាមួយមិត្តភក្តិនៅតាមច្រកផ្លូវក្នុងភូមិ ក្រោយពេលញ៉ាំបាយល្ងាចរួច។",
+                reading: "អរ-រីល ចក-គេ-នឺន ជូ-ណ្យក-អ៊ឺល ម៉ុក-កូ ណា-សរ ដុង-នេ ខុល-ម៉ុក-កេសរ ឈីន-ហ្គូ-ឌឺ-រ៉ា-ហ្គោ ស៊ុម-បា-កុក-ជីល-រ៉ឺល (      ) ហេត-ដា។",
+                options: ["하곤", "하는 줄", "하느라고", "할수록"],
+                optionsTrans: ["ធ្លាប់តែ/តែងតែធ្វើ", "ស្មានតែធ្វើ", "រវល់តែធ្វើ", "កាន់តែធ្វើ កាន់តែ..."],
+                answer: 0,
+                explanation: "ទម្រង់ `-곤 했다` បញ្ជាក់ពីទម្លាប់ក្នុងអតីតកាលដែលឥឡូវលែងសូវធ្វើ ឬលែងធ្វើទៀតហើយ (ធ្លាប់តែធ្វើជារឿយៗកាលពីមុន)។",
+                vocab: [
+                    { korean: "어릴 적", reading: "អរ-រីល ចក", translation: "កាលពីក្មេង" },
+                    { korean: "숨바꼭질", reading: "ស៊ុម-បា-កុក-ជីល", translation: "ល្បែងលាក់ខ្លួន/លាក់ដី" },
+                    { korean: "-곤 했다", reading: "កូន ហេត-ដា", translation: "ធ្លាប់តែធ្វើ (អតីតកាល)" }
+                ]
+            },
+            {
+                id: 7,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "가: 아키라 씨가 고향으로 돌아간 줄 알았어요.<br>나: 아니요, 다음 달에 (      ) 한국에 계속 있어요.",
+                translation: "가: ខ្ញុំស្មានតែលោក អាគីរ៉ា ត្រឡប់ទៅស្រុកកំណើតបាត់ហើយ។<br>나: ទេ! គាត់នឹងត្រឡប់ទៅនៅខែក្រោយ ដូច្នេះឥឡូវគាត់នៅកូរ៉េនៅឡើយទេ។",
+                reading: "가: អា-ឃី-រ៉ា ស៊ី-ហ្កា ខូ-ហ្យាំង-អ៊ឺ-រ៉ូ ថូ-រ៉ា-ហ្គាន ជុល អា-រ៉ា-សូ-យ៉ូ។ 나: អា-នី-យ៉ូ, ថា-អ៊ឹម ថាល-រ៉េ (      ) ហាន-ហ្គុក-គេ គ្យេ-សុក អ៊ី-សូ-យ៉ូ។",
+                options: ["돌아갈 줄 알았는데", "돌아가는 줄 알았는데", "돌아간 줄 알았는데", "돌아가곤 했는데"],
+                optionsTrans: ["ស្មានថានឹងត្រឡប់ទៅ (អនាគត/ផែនការ)", "ស្មានតែកំពុងត្រឡប់ទៅ", "ស្មានតែបានត្រឡប់ទៅហើយ", "ធ្លាប់តែត្រឡប់ទៅ"],
+                answer: 0,
+                explanation: "ដោយសារអ្នកនិយាយចង់បញ្ជាក់ពីការស្មានអំពី 'ព្រឹត្តិការណ៍នាពេលអនាគត ឬគម្រោង' (ត្រឡប់ទៅវិញនៅខែក្រោយ) វេយ្យាករណ៍ `-을/ㄹ 줄 알다` ត្រូវយកមកប្រើ ទៅជា `돌아갈 줄 알았는데`។",
+                vocab: [
+                    { korean: "고향", reading: "ខូ-ហ្យាំង", translation: "ស្រុកកំណើត" },
+                    { korean: "계속", reading: "គ្យេ-សុក", translation: "បន្ត/នៅឡើយ" },
+                    { korean: "-을/ㄹ 줄 알다", reading: "អ៊ឺល/ល ជុល អាល-ដា", translation: "ស្មានថានឹង... (អនាគត)" }
+                ]
+            },
+            {
+                id: 8,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "전자레인지는 마이크로파를 이용하여 음식 내부의 물 분자를 운동시키는 (      ) 제품이다.",
+                translation: "ម៉ាស៊ីនកម្តៅម្ហូប (Microwave) គឺជាផលិតផលដែលមានលក្ខណៈវិទ្យាសាស្ត្រ ដែលប្រើប្រាស់រលកសញ្ញាមីក្រូ ដើម្បីធ្វើឱ្យម៉ូលេគុលទឹកនៅក្នុងអាហារមានចលនា។",
+                reading: "ជុន-ចា-រេ-អ៊ីន-ជី-នឺន ម៉ា-អ៊ី-ខឺ-រ៉ូ-ផា-រ៉ឺល អ៊ី-រ្យុង-ហា-យ៉ូ អ៊ឹម-ស៊ីក នេ-ប៊ូ-អ៊ី មុល ភុន-ចា-រ៉ឺល អ៊ុន-ដុង-ស៊ី-ឃី-នឺន (      ) ជេ-ភុម-អ៊ី-ដា។",
+                options: ["과학적인", "일시적인", "개인적인", "감정적인"],
+                optionsTrans: ["មានលក្ខណៈវិទ្យាសាស្ត្រ (Scientific)", "មានលក្ខណៈបណ្តោះអាសន្ន", "មានលក្ខណៈផ្ទាល់ខ្លួន", "មានលក្ខណៈមនោសញ្ចេតនា/អារម្មណ៍"],
+                answer: 0,
+                explanation: "បច្ចេកវិទ្យាកម្តៅម្ហូបរបស់ Microwave គឺជាការអនុវត្តគោលការណ៍វិទ្យាសាស្ត្រ ដូច្នេះចម្លើយគឺ '과학적인' (ដែលជារបៀបវិទ្យាសាស្ត្រ)។",
+                vocab: [
+                    { korean: "전자레인지", reading: "ជុន-ចា-រេ-អ៊ីន-ជី", translation: "ម៉ាស៊ីនកម្តៅម្ហូប (Microwave)" },
+                    { korean: "물 분자", reading: "មុល ភុន-ចា", translation: "ម៉ូលេគុលទឹក" },
+                    { korean: "과학적", reading: "ក្វា-ហាក់-ចុក", translation: "ដែលជាវិទ្យាសាស្ត្រ" }
+                ]
+            },
+            {
+                id: 9,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "온도가 다른 두 물체가 접촉할 때, 열이 직접 이동하는 현상을 열 (      )(이)라고 부릅니다.",
+                translation: "នៅពេលដែលវត្ថុពីរដែលមានសីតុណ្ហភាពខុសគ្នាជួបប៉ះគ្នា បាតុភូតដែលកម្តៅផ្លាស់ទីដោយផ្ទាល់ត្រូវបានគេហៅថា ការនាំកម្តៅ (Thermal Conduction)។",
+                reading: "អ៊ុន-ដូ-ហ្កា ថា-រ៉ឺន ធូ មុល-ឆេ-ហ្កា ជុប-ឆុក-ហាល តេ, យ៉ល-រី ជិក-ចុប អ៊ី-ដុង-ហា-នឺន ហ្យន់-សាំង-អ៊ឺល យ៉ល (      )(អ៊ី)រ៉ា-ហ្គោ ភូ-រ៉៊ឹម-នី-ដា។",
+                options: ["전도", "대류", "복사", "단열"],
+                optionsTrans: ["ការនាំកម្តៅ (Conduction)", "ការចរន្តកម្តៅ (Convection)", "ការបញ្ចេញកម្តៅ (Radiation)", "ការទប់កម្តៅ/អ៊ីសូឡង់ (Insulation)"],
+                answer: 0,
+                explanation: "នៅក្នុងមេរៀនទី 3 '열전도' (Thermal conduction) គឺជាបាតុភូតដែលកម្តៅឆ្លងកាត់តាមរយៈការប៉ះគ្នាផ្ទាល់របស់វត្ថុ។",
+                vocab: [
+                    { korean: "접촉", reading: "ជុប-ឆុក", translation: "ការប៉ះពាល់/ការប៉ះគ្នា" },
+                    { korean: "이동", reading: "អ៊ី-ដុង", translation: "ការផ្លាស់ទី" },
+                    { korean: "열전도", reading: "យ៉ល-ជុន-ដូ", translation: "ការនាំកម្តៅ" }
+                ]
+            },
+            {
+                id: 10,
+                category: "VocabGrammar",
+                categoryKhmer: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                question: "컴퓨터나 스마트폰 같은 첨단 과학 (      )의 발달은 우리의 일상을 획기적으로 바꾸어 놓았습니다.",
+                translation: "ការអភិវឌ្ឍនៃបច្ចេកវិទ្យាវិទ្យាសាស្ត្រទំនើបៗ ដូចជាកុំព្យូទ័រ និងស្មាតហ្វូន បានផ្លាស់ប្តូរជីវិតប្រចាំថ្ងៃរបស់យើងយ៉ាងអស្ចារ្យ។",
+                reading: "ខុម-ព្យូ-ថរ-ណា ស៊ឺ-ម៉ា-ថឺ-ផូន ខា-ថឺន ឆុម-ដាន ក្វា-ហាក់ (      )អ៊ី បាល់-តាល-រ៉ឺន អ៊ូ-រី-អ៊ី អ៊ីល-សាំង-អ៊ឺល ហ្វិក-គី-ចុក-អ៊ឺ-រ៉ូ បា-គូ-អរ ណ្វា-ស៊ឹម-នី-ដា។",
+                options: ["기술", "오류", "방식", "신호"],
+                optionsTrans: ["បច្ចេកវិទ្យា (Technology)", "កំហុស/Error", "របៀប/វិធីសាស្ត្រ", "សញ្ញា/រលកសញ្ញា"],
+                answer: 0,
+                explanation: "ពាក្យ '과학 기술' (បច្ចេកវិទ្យាវិទ្យាសាស្ត្រ) គឺជាពាក្យផ្សំដ៏ពេញនិយមបំផុតដែលប្រើសម្រាប់សម្គាល់ការច្នៃប្រឌិត និងការអភិវឌ្ឍបច្ចេកវិទ្យាទំនើប។",
+                vocab: [
+                    { korean: "첨단", reading: "ឆុម-ដាន", translation: "ទំនើបបំផុត/ឈានមុខគេ" },
+                    { korean: "획기적", reading: "ហ្វិក-គី-ចុក", translation: "ដែលផ្លាស់ប្តូរខ្លាំង/អស្ចារ្យ" },
+                    { korean: "기술", reading: "គី-ស៊ុល", translation: "បច្ចេកវិទ្យា/ជំនាញ" }
+                ]
+            },
+
+            // PART 2: READING COMPREHENSION (Q11 - Q25)
+            // PASSAGE 1: SENSOR LIGHTS (Q11 - Q15)
+            {
+                id: 11,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "현관문에 들어서면 사람이 움직이는 것을 감지하여 자동으로 불이 켜지는 센서등이 있습니다. 센서등은 사람이 지나가면 불이 켜지고, 잠시 후 사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서 에너지를 절약하는 데 매우 유용합니다. 센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.",
+                passageTrans: "នៅពេលដែលយើងឈានជើងចូលទ្វារផ្ទះ មានអំពូលសេនស័រ (Sensor Light) ដែលចាប់សញ្ញាចលនារបស់មនុស្សហើយភ្លឺឡើងដោយស្វ័យប្រវត្តិ។ អំពូលសេនស័រនឹងភ្លឺឡើងនៅពេលមនុស្សដើរកាត់ ហើយបន្តិចក្រោយមកវានឹងរលត់ទៅវិញដោយខ្លួនឯងប្រសិនបើគ្មានមនុស្សនៅទីនោះ។ តាមរយៈការធ្វើបែបនេះ វាអាចការពារកំហុសឆ្គងនៃការបើកភ្លើងចោលរួចចេញទៅក្រៅ ហេតុនេះវាមានប្រយោជន៍ខ្លាំងណាស់ក្នុងការសន្សំសំចៃថាមពល។ គោលការណ៍វិទ្យាសាស្ត្ររបស់អំពូលសេនស័រគឺ សេនស័រចាប់យករលកសញ្ញាអ៊ីនហ្វ្រារ៉េដ (Infrared) ដែលភាយចេញពីខ្លួនមនុស្សផ្ទាល់។",
+                passageReading: "ហ្យន់-គ្វាន-មុន-ណេ ធូ-រ៉រ-សរ-ម្យ៉ន សា-រ៉ា-មី អ៊ុន-ដុង-ហា-នឺន... [ចុចប៊ូតុង Speaker ដើម្បីស្តាប់ការអានទាំងស្រុង]",
+                question: "이 글의 주제로 가장 알맞은 것은 무엇입니까?",
+                translation: "តើចំណងជើង ឬប្រធានបទដែលសមស្របបំផុតនៃអត្ថបទនេះគឺជាអ្វី?",
+                reading: "អ៊ី គឺ-រ៉ី ជូ-ជេ-រ៉ូ ខា-ចាំង អាល-ម៉ា-ជឺន កូ-ស៊ឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["센서등의 작동 원리와 장점", "에너지를 절약하는 수동 불 끄기", "인체 적외선의 위험성", "현관문 센서의 고장 원인"],
+                optionsTrans: ["គោលការណ៍ដំណើរការ និងអត្ថប្រយោជន៍របស់អំពូលសេនស័រ", "ការបិទភ្លើងដោយដៃដើម្បីសន្សំថាមពល", "គ្រោះថ្នាក់នៃរលកសញ្ញាអ៊ីនហ្វ្រារ៉េដរបស់ខ្លួនមនុស្ស", "មូលហេតុនៃការខូចខាតសេនស័រទ្វារផ្ទះ"],
+                optionsReading: ["", "", "", ""],
+                answer: 0,
+                explanation: "អត្ថបទនេះរៀបរាប់អំពីរបៀបដែលអំពូលសេនស័រដំណើរការ (ចាប់សញ្ញាអ៊ីនហ្វ្រារ៉េដពីខ្លួនមនុស្ស) និងអត្ថប្រយោជន៍របស់វា (សន្សំសំចៃថាមពល និងការពារការភ្លេចបិទភ្លើង)។",
+                vocab: [
+                    { korean: "감지하다", reading: "កាំ-ជី-ហា-ដា", translation: "ចាប់សញ្ញា/ដឹងសញ្ញា" },
+                    { korean: "저절로", reading: "ចូ-ជុល-រ៉ូ", translation: "ដោយខ្លួនឯង/ស្វ័យប្រវត្តិ" },
+                    { korean: "적외선", reading: "ចុក-វ៉េ-ស៊ុន", translation: "រលកសញ្ញាអ៊ីនហ្វ្រារ៉េដ (Infrared)" }
+                ]
+            },
+            {
+                id: 12,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "현관문에 들어서면 사람이 움직이는 것을 감지하여 자동으로 불이 켜지는 센서등이 있습니다. 센서등은 사람이 지나가면 불이 켜지고, 잠시 후 사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서 에너지를 절약하는 데 매우 유용합니다. 센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.",
+                question: "센서등이 에너지를 절약할 수 있는 이유는 무엇입니까?",
+                translation: "តើមូលហេតុអ្វីបានជាអំពូលសេនស័រអាចសន្សំសំចៃថាមពលបាន?",
+                reading: "សេន-សរ-ឌឺង-ងី អេ-នរ-ជី-រ៉ឺល ជុល-យ៉ាក់-ហាល ស៊ូ អ៊ីត-នឺន អ៊ី-យូ-នឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["사람이 없을 때 불이 자동으로 꺼지기 때문에", "인체 적외선을 차단하기 때문에", "밝기를 스스로 조절하기 때문에", "낮에는 불이 켜지지 않기 때문에"],
+                optionsTrans: ["ពីព្រោះភ្លើងរលត់ដោយស្វ័យប្រវត្តនៅពេលគ្មានមនុស្ស", "ពីព្រោះវាបិទរលកសញ្ញាអ៊ីនហ្វ្រារ៉េដ", "ពីព្រោះវាសម្រួលកម្រិតពន្លឺដោយខ្លួនឯង", "ពីព្រោះភ្លើងមិនភ្លឺនៅពេលថ្ងៃ"],
+                answer: 0,
+                explanation: "យោងតាមអត្ថបទ '사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서...' ដូច្នេះមូលហេតុគឺវាបិទដោយខ្លួនឯងនៅពេលគ្មានមនុស្សនៅទីនោះ។",
+                vocab: [
+                    { korean: "절약하다", reading: "ជុល-យ៉ាក់-ហា-ដា", translation: "សន្សំសំចៃ" },
+                    { korean: "방지하다", reading: "បាំង-ជី-ហា-ដា", translation: "ការពារ/ទប់ស្កាត់" }
+                ]
+            },
+            {
+                id: 13,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "현관문에 들어서면 사람이 움직이는 것을 감지하여 자동으로 불이 켜지는 센서등이 있습니다. 센서등은 사람이 지나가면 불이 켜지고, 잠시 후 사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서 에너지를 절약하는 데 매우 유용합니다. 센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.",
+                question: "센서등의 작동에 쓰이는 '과학적 원리'는 무엇입니까?",
+                translation: "តើ 'គោលការណ៍វិទ្យាសាស្ត្រ' អ្វីដែលត្រូវបានប្រើប្រាស់ក្នុងការដំណើរការរបស់អំពូលសេនស័រ?",
+                reading: "សេន-សរ-ឌឺង-ងី ឆាក់-ដុង-ងេ ស៊ឺ-អ៊ី-នឺន ក្វា-ហាក់-ចុក វ៉ុន-រី-នឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["인체의 적외선 감지", "열전도를 이용한 발열", "스마트폰 원격 제어", "마이크로파 분자 운동"],
+                optionsTrans: ["ការចាប់យករលកសញ្ញាអ៊ីនហ្វ្រារ៉េដរបស់រាងកាយមនុស្ស", "ការបញ្ចេញកម្តៅដោយប្រើការនាំកម្តៅ", "ការបញ្ជាពីចម្ងាយតាមស្មាតហ្វូន", "ចលនាម៉ូលេគុលដោយរលកសញ្ញាមីក្រូ"],
+                answer: 0,
+                explanation: "ប្រយោគចុងក្រោយនៃអត្ថបទចែងថា '센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.' ចម្លើយត្រឹមត្រូវគឺការចាប់យក 적외선 (Infrared)។",
+                vocab: [
+                    { korean: "인체", reading: "អ៊ីន-ឆេ", translation: "រាងកាយមនុស្ស" },
+                    { korean: "작동", reading: "ឆាក់-ដុង", translation: "ការដំណើរការ/ការរត់ (ម៉ាស៊ីន)" }
+                ]
+            },
+            {
+                id: 14,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "현관문에 들어서면 사람이 움직이는 것을 감지하여 자동으로 불이 켜지는 센서등이 있습니다. 센서등은 사람이 지나가면 불이 켜지고, 잠시 후 사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서 에너지를 절약하는 데 매우 유용합니다. 센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.",
+                question: "이 글의 내용과 일치하는 것(맞는 것)은 무엇입니까?",
+                translation: "តើព័ត៌មានមួយណាដែលត្រូវគ្នា (ត្រឹមត្រូវ) ទៅនឹងខ្លឹមសារអត្ថបទខាងលើ?",
+                reading: "អ៊ី គឺ-រ៉ី នេ-យ៉ុង-ក្វា អ៊ីល-ឈី-ហា-នឺន កុ-ស៊ឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["센서등은 에너지를 아끼는 데 도움을 준다.", "센서등은 직접 손으로 켜고 꺼야 한다.", "센서등은 밤에만 작동하는 과학 기술이다.", "센서등은 스마트폰이 있어야 작동한다."],
+                optionsTrans: ["អំពូលសេនស័រជួយក្នុងការសន្សំសំចៃថាមពល។", "អំពូលសេនស័រត្រូវតែបើក និងបិទដោយដៃផ្ទាល់។", "អំពូលសេនស័រគឺជាបច្ចេកវិទ្យាដែលដំណើរការតែពេលយប់ប៉ុណ្ណោះ។", "អំពូលសេនស័រត្រូវតែមានស្មាតហ្វូនទើបដំណើរការបាន។"],
+                answer: 0,
+                explanation: "យោងតាមអត្ថបទ '에너지를 절약하는 데 매우 유용합니다' ដូច្នេះចម្លើយទី ១ គឺត្រឹមត្រូវបំផុត។ ចម្លើយទី ២ ខុសព្រោះវាដំណើរការដោយស្វ័យប្រវត្ត (자동으로)។",
+                vocab: [
+                    { korean: "아끼다", reading: "អា-ឃី-ដា", translation: "សន្សំ/សំចៃ (ដូចនឹង 절약하다)" },
+                    { korean: "일치하다", reading: "អ៊ីល-ឈី-ហា-ដា", translation: "ត្រូវគ្នា/ត្រូវពិតប្រាកដ" }
+                ]
+            },
+            {
+                id: 15,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "현관문에 들어서면 사람이 움직이는 것을 감지하여 자동으로 불이 켜지는 센서등이 있습니다. 센서등은 사람이 지나가면 불이 켜지고, 잠시 후 사람이 없으면 저절로 꺼집니다. 이를 통해 불을 켜두고 외출하는 실수를 방지할 수 있어서 에너지를 절약하는 데 매우 유용합니다. 센서등의 과학적 원리는 인체에서 나오는 적외선을 센서가 직접 감지하는 것입니다.",
+                question: "이 글의 내용과 일치하지 않는 것(틀린 것)은 무엇입니까?",
+                translation: "តើព័ត៌មានមួយណាដែលមិនត្រូវគ្នា (ខុស) ទៅនឹងខ្លឹមសារអត្ថបទខាងលើ?",
+                reading: "អ៊ី គឺ-រ៉ី នេ-យ៉ុង-ក្វា អ៊ីល-ឈី-ហា-ជី អាន-នឺន កុ-ស៊ឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["센서등을 켜기 위해서는 큰 소리를 내야 한다.", "센서등은 사람이 지나가면 불이 켜진다.", "사람이 없으면 센서등은 잠시 후 꺼진다.", "센서등은 외출 시 불을 켜놓는 실수를 막아준다."],
+                optionsTrans: ["ដើម្បីឱ្យអំពូលសេនស័រភ្លឺ យើងត្រូវតែបង្កើតសំឡេងខ្លាំងៗ។", "អំពូលសេនស័រភ្លឺឡើងនៅពេលដែលមានមនុស្សដើរកាត់។", "ប្រសិនបើគ្មានមនុស្ស អំពូលសេនស័រនឹងរលត់ទៅវិញបន្តិចក្រោយមក។", "អំពូលសេនស័រជួយទប់ស្កាត់កំហុសឆ្គងនៃការបើកភ្លើងចោលពេលចេញក្រៅ។"],
+                answer: 0,
+                explanation: "អំពូលសេនស័រចាប់សញ្ញាចលនារាងកាយមនុស្ស (적외선 감지) មិនមែនចាប់សញ្ញាសំឡេងឡើយ ដូច្នេះជម្រើសទី ១ គឺខុស (ដែលជាចម្លើយត្រូវសម្រាប់សំណួរនេះ)។",
+                vocab: [
+                    { korean: "일치하지 않다", reading: "អ៊ីល-ឈី-ហា-ជី អាន-ដា", translation: "មិនត្រូវគ្នា/មិនពិត" },
+                    { korean: "소리", reading: "សូ-រី", translation: "សំឡេង" }
+                ]
+            },
+
+            // PASSAGE 2: REFRIGERATOR AND BACTERIA (Q16 - Q20)
+            {
+                id: 16,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "냉장고는 음식을 신선하게 보관하기 위한 과학적 발명품입니다. 냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다. 온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에 음식이 쉽게 상하지 않습니다. 그러나 냉장고에 보관한다고 해서 모든 음식을 평생 보관할 수 있는 것은 아닙니다. 일정 시간이 지나면 식품의 신선도가 떨어지므로 적절한 기간 내에 소비해야 합니다.",
+                passageTrans: "ទូទឹកកក គឺជាឧបករណ៍បង្កើតថ្មីតាមបែបវិទ្យាសាស្ត្រសម្រាប់រក្សាអាហារឱ្យនៅស្រស់ល្អ។ គោលការណ៍ជាមូលដ្ឋានរបស់ទូទឹកកកគឺការបញ្ចុះសីតុណ្ហភាពខាងក្នុង ដើម្បីទប់ស្កាត់ការកើនឡើងនៃបាក់តេរី និងមេរោគផ្សេងៗ។ នៅពេលសីតុណ្ហភាពទាប បាក់តេរី ឬមេរោគមិនអាចធ្វើសកម្មភាពបានស្រួលឡើយ ដូច្នេះហើយទើបអាហារមិនងាយខូច។ ទោះជាយ៉ាងណាក៏ដោយ ការដាក់ក្នុងទូទឹកកកមិនមែនមានន័យថាយើងអាចរក្សាទុកអាហារទាំងអស់បានពេញមួយជីវិតនោះទេ។ ក្រោយពេលកំណត់ណាមួយ កម្រិតភាពស្រស់របស់អាហារនឹងធ្លាក់ចុះ ដូច្នេះត្រូវតែប្រើប្រាស់វាឱ្យអស់ក្នុងរយៈពេលសមស្របមួយ។",
+                passageReading: "ណេង-ចាំង-កូ-នឺន អ៊ឹម-ស៊ីក-គឹល ស៊ីន-ស៊ុន-ហា-គេ... [ចុចប៊ូតុង Speaker ដើម្បីស្តាប់ការអានទាំងស្រុង]",
+                question: "냉장고가 음식을 상하지 않게 지키는 '기본 원리'는 무엇입니까?",
+                translation: "តើ 'គោលការណ៍ជាមូលដ្ឋាន' របស់ទូទឹកកកក្នុងការការពារអាហារមិនឱ្យខូចគឺអ្វី?",
+                reading: "ណេង-ចាំង-កូ-ហ្កា អ៊ឹម-ស៊ីក-គឹល សាំង-ហា-ជី អាន-គេ ជី-ឃី-នឺន គី-ប៊ុន វ៉ុន-រី-នឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["내부 온도를 낮춰 세균 증식을 억제함", "음식을 급속으로 냉동시킴", "음식에 수분을 계속 공급함", "마이크로파로 음식을 가열함"],
+                optionsTrans: ["ការបញ្ចុះសីតុណ្ហភាពខាងក្នុងដើម្បីទប់ស្កាត់ការកើនឡើងនៃមេរោគ", "ការធ្វើឱ្យអាហារកកភ្លាមៗ", "ការផ្គត់ផ្គង់សំណើមដល់អាហារជាប្រចាំ", "ការកម្តៅអាហារដោយប្រើរលកសញ្ញាមីក្រូ"],
+                answer: 0,
+                explanation: "យោងតាមអត្ថបទ '냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다' ដូច្នេះចម្លើយទី ១ គឺត្រឹមត្រូវបំផុត។",
+                vocab: [
+                    { korean: "신선하다", reading: "ស៊ីន-ស៊ុន-ហា-ដា", translation: "ស្រស់ (បន្លែ/ផ្លែឈើ/សាច់)" },
+                    { korean: "억제하다", reading: "អុក-ចេ-ហា-ដា", translation: "ទប់ស្កាត់/កាត់បន្ថយ" },
+                    { korean: "세균 증식", reading: "សេ-គ្យូន ជឹង-ស៊ីក", translation: "ការកើនឡើង/ការរីករាលដាលនៃមេរោគ" }
+                ]
+            },
+            {
+                id: 17,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "냉장고는 음식을 신선하게 보관하기 위한 과학적 발명품입니다. 냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다. 온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에 음식이 쉽게 상하지 않습니다. 그러나 냉장고에 보관한다고 해서 모든 음식을 평생 보관할 수 있는 것은 아닙니다. 일정 시간이 지나면 식품의 신선도가 떨어지므로 적절한 기간 내에 소비해야 합니다.",
+                question: "이 글에 나오는 '온도와 세균'의 관계에 대한 설명으로 옳은 것은?",
+                translation: "តើការពន្យល់មួយណាត្រឹមត្រូវអំពីទំនាក់ទំនងរវាង 'សីតុណ្ហភាព និងមេរោគ' នៅក្នុងអត្ថបទនេះ?",
+                reading: "អ៊ី គឺ-រ៉េ ណា-អូ-នឺន អ៊ុន-ដូ-វ៉ា សេ-គ្យូន-ណេ គ្វាន-ក្យេ-អេ ទេ-ហាន សុល-ម្យ៉ង-អ៊ឺរ៉ូ អុល-ហឺន កូ-ស៊ឺន?",
+                options: ["온도가 낮을수록 세균이 활동하기 어렵다.", "온도가 높을수록 세균이 소멸한다.", "온도와 세균의 활동은 아무 관계가 없다.", "냉장고 속 온도는 세균을 완전히 죽인다."],
+                optionsTrans: ["សីតុណ្ហភាពកាន់តែទាប មេរោគកាន់តែពិបាកធ្វើសកម្មភាព។", "សីតុណ្ហភាពកាន់តែខ្ពស់ មេរោគកាន់តែរលាយបាត់ទៅវិញ។", "សីតុណ្ហភាព និងសកម្មភាពមេរោគគ្មានទំនាក់ទំនងគ្នាឡើយ។", "សីតុណ្ហភាពក្នុងទូទឹកកកសម្លាប់មេរោគទាំងស្រុង។"],
+                answer: 0,
+                explanation: "យោងតាមអត្ថបទ '온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에' ដូច្នេះសីតុណ្ហភាពទាបធ្វើឱ្យមេរោគពិបាកធ្វើសកម្មភាព (활동하기 어렵다)។",
+                vocab: [
+                    { korean: "소멸하다", reading: "សូ-ម្យ៉ល-ហា-ដា", translation: "រលាយបាត់/រលត់ទៅ" },
+                    { korean: "관계", reading: "គ្វាន-ក្យេ", translation: "ទំនាក់ទំនង" }
+                ]
+            },
+            {
+                id: 18,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "냉장고는 음식을 신선하게 보관하기 위한 과학적 발명품입니다. 냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다. 온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에 음식이 쉽게 상하지 않습니다. 그러나 냉장고에 보관한다고 해서 모든 음식을 평생 보관할 수 있는 것은 아닙니다. 일정 시간이 지나면 식품의 신선도가 떨어지므로 적절한 기간 내에 소비해야 합니다.",
+                question: "글쓴이가 냉장고 사용 시 당부하는 주의점은 무엇입니까?",
+                translation: "តើចំណុចប្រុងប្រយ័ត្នអ្វីដែលអ្នកនិពន្ធផ្តាំផ្ញើពេលប្រើប្រាស់ទូទឹកកក?",
+                reading: "គឺល-ស៊ឹន-អ៊ី-ហ្កា ណេង-ចាំង-កូ សា-យ៉ុង ស៊ី ថាំង-ពូ-ហា-នឺន ជូ-អ៊ី-ចម-មុន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["음식을 평생 보관할 수 없으므로 적절한 기간 내에 먹어야 한다.", "냉장고 문을 항상 열어두어야 한다.", "세균을 죽이기 위해 온도를 매일 높여야 한다.", "모든 음식은 냉동실에만 보관해야 한다."],
+                optionsTrans: ["ដោយសារមិនអាចរក្សាទុកអាហារបានពេញមួយជីវិត ត្រូវតែញ៉ាំវាក្នុងរយៈពេលសមស្របមួយ។", "ត្រូវតែបើកទ្វារទូទឹកកកចោលជានិច្ច។", "ត្រូវតែបង្កើនសីតុណ្ហភាពជារៀងរាល់ថ្ងៃដើម្បីសម្លាប់មេរោគ។", "រាល់អាហារទាំងអស់ត្រូវតែរក្សាទុកតែក្នុងកន្លែងកកប៉ុណ្ណោះ។"],
+                answer: 0,
+                explanation: "អត្ថបទបញ្ជាក់ថា '평생 보관할 수 있는 것은 아닙니다... 적절한 기간 내에 소비해야 합니다.' ដូច្នេះត្រូវញ៉ាំអាហារក្នុងរយៈពេលសមស្រប មិនត្រូវទុកយូរពេកឡើយ។",
+                vocab: [
+                    { korean: "당부하다", reading: "ថាំង-ពូ-ហា-ដា", translation: "ផ្តាំផ្ញើ/សំណូមពរ" },
+                    { korean: "소비하다", reading: "សូ-ប៊ី-ហា-ដា", translation: "ប្រើប្រាស់/ទទួលទាន" }
+                ]
+            },
+            {
+                id: 19,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "냉장고는 음식을 신선하게 보관하기 위한 과학적 발명품입니다. 냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다. 온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에 음식이 쉽게 상하지 않습니다. 그러나 냉장고에 보관한다고 해서 모든 음식을 평생 보관할 수 있는 것은 아닙니다. 일정 시간이 지나면 식품의 신선도가 떨어지므로 적절한 기간 내에 소비해야 합니다.",
+                question: "이 글의 내용과 일치하지 않는 것(틀린 것)은 무엇입니까?",
+                translation: "តើព័ត៌មានមួយណាដែលមិនត្រឹមត្រូវតាមអត្ថបទខាងលើ?",
+                reading: "អ៊ី គឺ-រ៉ី នេ-យ៉ុង-ក្វា អ៊ីល-ឈី-ហា-ជី អាន-នឺន កុ-ស៊ឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["냉장고에 보관하면 상한 음식도 다시 신선해진다.", "냉장고 온도가 낮으면 세균 증식이 억제된다.", "냉장고도 음식을 영구적으로 보관하지는 못한다.", "시간이 흐르면 냉장고 안의 음식도 신선도가 떨어진다."],
+                optionsTrans: ["ប្រសិនបើដាក់ក្នុងទូទឹកកក អាហារដែលខូចហើយនឹងក្លាយជាស្រស់ឡើងវិញ។", "បើដកសីតុណ្ហភាពទូទឹកកកឱ្យទាប វានឹងទប់ស្កាត់ការរីករាលដាលនៃមេរោគ។", "ទូទឹកកកក៏មិនអាចរក្សាទុកអាហារបានរហូតគ្មានកំណត់បានដែរ។", "នៅពេលពេលវេលាកន្លងផុតទៅ អាហារក្នុងទូទឹកកកក៏នឹងធ្លាក់ចុះភាពស្រស់ដែរ។"],
+                answer: 0,
+                explanation: "ទូទឹកកកគ្រាន់តែជួយពន្យារភាពស្រស់ និងទប់ស្កាត់មេរោគ វាមិនអាចធ្វើឱ្យអាហារដែលខូចទៅហើយ (상한 음식) ក្លាយជាស្រស់ឡើងវិញទេ ដូច្នេះជម្រើសទី ១ គឺខុស និងជាចម្លើយត្រូវ។",
+                vocab: [
+                    { korean: "영구적", reading: "យ៉ុង-គូ-ចុក", translation: "ជារៀងរហូត/អចិន្ត្រៃយ៍" },
+                    { korean: "상하다", reading: "សាំង-ហា-ដា", translation: "ខូច/ផ្អូម (អាហារ)" }
+                ]
+            },
+            {
+                id: 20,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "냉장고는 음식을 신선하게 보관하기 위한 과학적 발명품입니다. 냉장고의 기본 원리는 내부 온도를 낮추어 세균의 증식을 억제하는 것입니다. 온도가 낮으면 박테리아나 세균이 활동하기 어렵기 때문에 음식이 쉽게 상하지 않습니다. 그러나 냉장고에 보관한다고 해서 모든 음식을 평생 보관할 수 있는 것은 아닙니다. 일정 시간이 지나면 식품의 신선도가 떨어지므로 적절한 기간 내에 소비해야 합니다.",
+                question: "빈칸에 들어갈 가장 알맞은 단어는 무엇입니까?<br>냉장고는 과학 기술의 발달로 만들어진 유용한 (      )이다.",
+                translation: "តើពាក្យណាដែលសមស្របបំផុតដើម្បីបំពេញក្នុងចន្លោះទទេ?<br>ទូទឹកកក គឺជា (      ) ដែលមានប្រយោជន៍ បង្កើតឡើងដោយការរីកចម្រើននៃបច្ចេកវិទ្យាវិទ្យាសាស្ត្រ។",
+                reading: "ណេង-ចាំង-កូ-នឺន ក្វា-ហាក់ គី-ស៊ុល-រី បាល់-តាល-រ៉ូ ម៉ាន-ឌឺ-ជិន យូ-យ៉ុង-ហាន (      )អ៊ី-ដា។",
+                options: ["발명품", "부작용", "오류", "신호"],
+                optionsTrans: ["ផលិតផលច្នៃប្រឌិតថ្មី (Invention)", "ផលប៉ះពាល់អវិជ្ជមាន (Side effect)", "កំហុសឆ្គង (Error)", "រលកសញ្ញា (Signal)"],
+                answer: 0,
+                explanation: "ទូទឹកកក គឺជា '발명품' (ផលិតផលដែលបង្កើតថ្មី) ដ៏មានសារៈប្រយោជន៍សម្រាប់ជីវិតមនុស្សជាតិ។",
+                vocab: [
+                    { korean: "발명품", reading: "បាល់-ម្យ៉ង-ភុម", translation: "របស់របរដែលគេបង្កើតថ្មី" },
+                    { korean: "부작용", reading: "ភូ-ចា-ក្យុង", translation: "ផលប៉ះពាល់អវិជ្ជមាន" }
+                ]
+            },
+
+            // PASSAGE 3: SMART HOME (Q21 - Q25)
+            {
+                id: 21,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "최근 과학 기술의 발달로 집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 '스마트 홈'이 늘어나고 있습니다. 외출 중에도 가스밸브를 안전하게 잠그거나 에어컨을 미리 켜 둘 수 있어서 매우 편리합니다. 또한, 스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다. 앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.",
+                passageTrans: "នាពេលថ្មីៗនេះ ដោយសារការរីកចម្រើននៃបច្ចេកវិទ្យាវិទ្យាសាស្ត្រ ផ្ទះវៃឆ្លាត 'Smart Home' ដែលតភ្ជាប់ឧបករណ៍អេឡិចត្រូនិកទាំងអស់ក្នុងផ្ទះទៅនឹងអ៊ីនធឺណិត និងបញ្ជាបានយ៉ាងងាយស្រួលតាមរយៈស្មាតហ្វូន កំពុងតែកើនឡើង។ ទោះបីជានៅខាងក្រៅផ្ទះ ក៏យើងអាចបិទវ៉ាល់ហ្គាសដោយសុវត្ថិភាព ឬបើកម៉ាស៊ីនត្រជាក់ទុកជាមុន ដែលវាមានភាពងាយស្រួលខ្លាំងណាស់។ លើសពីនេះ ផ្ទះវៃឆ្លាតមានប្រព័ន្ធបញ្ញាសិប្បនិម្មិត (AI) វិភាគទម្លាប់រស់នៅប្រចាំថ្ងៃរបស់អ្នកប្រើប្រាស់ ដើម្បីផ្តល់សីតុណ្ហភាព និងបរិស្ថានដ៏ល្អប្រសើរបំផុតដោយស្វ័យប្រវត្តិ។ នៅថ្ងៃអនាគត បច្ចេកវិទ្យានេះនឹងធ្វើឱ្យជីវិតមនុស្សកាន់តែមានភាពឆ្លាតវៃជាងមុន។",
+                passageReading: "ឆ្វេ-គឹន ក្វា-ហាក់ គី-ស៊ុល-រី បាល់-តាល-រ៉ូ... [ចុចប៊ូតុង Speaker ដើម្បីស្តាប់ការអានទាំងស្រុង]",
+                question: "이 글에서 소개하는 '스마트 홈'이란 무엇입니까?",
+                translation: "តើអ្វីទៅជា 'Smart Home' ដែលត្រូវបានណែនាំនៅក្នុងអត្ថបទនេះ?",
+                reading: "អ៊ី គឺ-រ៉េសរ សូ-ហ្គេ-ហា-នឺន 'ស៊ឺ-ម៉ា-ថឺ ហូម'-អ៊ី-រ៉ាន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["스마트폰으로 집 안의 전자기기를 제어하는 시스템", "직접 나무로 짓는 친환경 주택", "전기 요금을 가장 많이 절약하는 옛날 집", "현관문에 센서등만 설치된 아파트"],
+                optionsTrans: ["ប្រព័ន្ធដែលគ្រប់គ្រងឧបករណ៍អេឡិចត្រូនិកក្នុងផ្ទះតាមស្មាតហ្វូន", "ផ្ទះធម្មជាតិដែលសាងសង់ដោយឈើផ្ទាល់ដៃ", "ផ្ទះបុរាណដែលជួយសន្សំសំចៃថ្លៃអគ្គិសនីបានច្រើនបំផុត", "ផ្ទះល្វែងដែលមានតែអំពូលសេនស័រនៅមាត់ទ្វារ"],
+                answer: 0,
+                explanation: "យោងតាមប្រយោគដំបូង '집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 스마트 홈' ដូច្នេះចម្លើយទី ១ គឺត្រឹមត្រូវបំផុត។",
+                vocab: [
+                    { korean: "전자기기", reading: "ជុន-ចា-គី-គី", translation: "ឧបករណ៍អេឡិចត្រូនិក" },
+                    { korean: "제어하다", reading: "ជេ-អរ-ហា-ដា", translation: "គ្រប់គ្រង/បញ្ជា" },
+                    { korean: "스마트 홈", reading: "ស៊ឺ-ម៉ា-ថឺ ហូម", translation: "ផ្ទះវៃឆ្លាត/Smart Home" }
+                ]
+            },
+            {
+                id: 22,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "최근 과학 기술의 발달로 집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 '스마트 홈'이 늘어나고 있습니다. 외출 중에도 가스밸브를 안전하게 잠그거나 에어컨을 미리 켜 둘 수 있어서 매우 편리합니다. 또한, 스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다. 앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.",
+                question: "외출 중일 때 스마트 홈을 통해 할 수 있는 일이 아닌 것은?",
+                translation: "តើអ្វីជាការងារដែល 'មិនអាចធ្វើបាន' តាមរយៈ Smart Home នៅពេលយើងនៅខាងក្រៅផ្ទះ?",
+                reading: "វ៉េ-ឈុល ជុង-អ៊ីល តេ ស៊ឺ-ម៉ា-ថឺ ហូម-អ៊ឺល ថុង-ហេ ហាល ស៊ូ អ៊ីត-នឺន អ៊ី-រី អា-នី-នឺន កូ-ស៊ឺន?",
+                options: ["고향에 계신 부모님의 아궁이에 불 때기", "가스밸브가 열려 있을 때 원격으로 잠그기", "집에 도착하기 전에 에어컨 미리 켜기", "집 안 전자기기의 전원 제어하기"],
+                optionsTrans: ["ការដុតអុសចង្ក្រានកម្តៅផ្ទះឱ្យឪពុកម្តាយនៅស្រុកកំណើត", "ការបិទវ៉ាល់ហ្គាសពីចម្ងាយនៅពេលវាបើកចោល", "ការបើកម៉ាស៊ីនត្រជាក់ទុកជាមុន មុនពេលទៅដល់ផ្ទះ", "ការគ្រប់គ្រងការបិទបើកភ្លើងនៃឧបករណ៍អេឡិចត្រូនិកក្នុងផ្ទះ"],
+                answer: 0,
+                explanation: "ការដុតអុសចង្ក្រានបែបបុរាណ (아궁이에 불 때기) មិនមែនជាឧបករណ៍អេឡិចត្រូនិកដែលតភ្ជាប់អ៊ីនធឺណិតបញ្ជាតាម Smart Home បានឡើយ ដូច្នេះវាជាចម្លើយដែលមិនអាចធ្វើបាន។",
+                vocab: [
+                    { korean: "외출 중", reading: "វ៉េ-ឈុល ជុង", translation: "អំឡុងពេលនៅខាងក្រៅ" },
+                    { korean: "원격 제어", reading: "វ៉ុន-គ្យក ជេ-អរ", translation: "ការគ្រប់គ្រងពីចម្ងាយ (Remote Control)" }
+                ]
+            },
+            {
+                id: 23,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "최근 과학 기술의 발달로 집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 '스마트 홈'이 늘어나고 있습니다. 외출 중에도 가스밸브를 안전하게 잠그거나 에어컨을 미리 켜 둘 수 있어서 매우 편리합니다. 또한, 스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다. 앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.",
+                question: "스마트 홈이 사용자에게 '최적의 환경'을 자동으로 제공해 주는 방법은?",
+                translation: "តើ Smart Home ផ្តល់បរិស្ថានដ៏ល្អប្រសើរបំផុត (최적의 환경) ជូនអ្នកប្រើប្រាស់ដោយស្វ័យប្រវត្តតាមវិធីណា?",
+                reading: "ស៊ឺ-ម៉ា-ថឺ ហូម-មី សា-យ៉ុង-ចា-អេ-គេ ឆ្វេ-ជក-គី ហ្វាន-គ្យង់-អ៊ឺល ឆា-ដុង-អ៊ឺ-រ៉ូ ជេ-គ្យុង-ហេ ជូ-នឺន បាំង-ផប់-ប៊ឺន?",
+                options: ["사용자의 평소 생활 패턴을 인공지능이 분석하여", "수동으로 리모컨 버튼을 계속 누름으로써", "인터넷 연결을 모두 차단하고 수면 유도", "매일 온도를 일정하게 고정하여"],
+                optionsTrans: ["តាមរយៈការវិភាគទម្លាប់រស់នៅប្រចាំថ្ងៃរបស់អ្នកប្រើប្រាស់ដោយបញ្ញាសិប្បនិម្មិត (AI)", "តាមរយៈការចុចប៊ូតុងតេឡេបញ្ជាដោយដៃជាប្រចាំ", "តាមរយៈការផ្តាច់អ៊ីនធឺណិតទាំងអស់ដើម្បីឱ្យគេងលក់ស្រួល", "តាមរយៈការកំណត់សីតុណ្ហភាពឱ្យនៅថេរដដែលរាល់ថ្ងៃ"],
+                answer: 0,
+                explanation: "យោងតាមអត្ថបទ '스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다.' ចម្លើយទី ១ គឺពិតប្រាកដណាស់។",
+                vocab: [
+                    { korean: "패턴", reading: "ផេ-ថន", translation: "ទម្រង់/គំរូ/ទម្លាប់" },
+                    { korean: "인공지능", reading: "អ៊ីន-គុង-ជី-នីង", translation: "បញ្ញាសិប្បនិម្មិត (AI)" },
+                    { korean: "최적", reading: "ឆ្វេ-ជក", translation: "ល្អប្រសើរបំផុត (Optimal)" }
+                ]
+            },
+            {
+                id: 24,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "최근 과학 기술의 발달로 집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 '스마트 홈'이 늘어나고 있습니다. 외출 중에도 가스밸브를 안전하게 잠그거나 에어컨을 미리 켜 둘 수 있어서 매우 편리합니다. 또한, 스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다. 앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.",
+                question: "이 글의 내용과 일치하지 않는 것(틀린 것)은 무엇입니까?",
+                translation: "តើព័ត៌មានមួយណាដែលមិនត្រូវគ្នា (ខុស) ទៅនឹងខ្លឹមសារអត្ថបទខាងលើ?",
+                reading: "អ៊ី គឺ-រ៉ី នេ-យ៉ុង-ក្វា អ៊ីល-ឈី-ហា-ជី អាន-នឺន កុ-ស៊ឺន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["스마트 홈은 수동으로만 제어할 수 있어 노약자가 쓰기 어렵다.", "스마트 홈 기술은 앞으로 더 발전할 것이다.", "집 밖에서도 스마트폰으로 에어컨을 켤 수 있다.", "인공지능(AI)이 생활 패턴을 스스로 분석한다."],
+                optionsTrans: ["Smart Home អាចគ្រប់គ្រងបានតែដោយដៃផ្ទាល់ប៉ុណ្ណោះ ដូច្នេះមនុស្សចាស់ពិបាកប្រើប្រាស់ណាស់។", "បច្ចេកវិទ្យា Smart Home នឹងកាន់តែអភិវឌ្ឍបន្ថែមទៀតនាពេលអនាគត។", "ទោះបីជានៅក្រៅផ្ទះ ក៏យើងអាចបើកម៉ាស៊ីនត្រជាក់តាមស្មាតហ្វូនបានដែរ។", "បញ្ញាសិប្បនិម្មិត (AI) វិភាគទម្លាប់រស់នៅរបស់ម្ចាស់ផ្ទះដោយខ្លួនឯង។"],
+                answer: 0,
+                explanation: "Smart Home ដំណើរការដោយស្វ័យប្រវត្ត (자동으로) និងបញ្ជាពីចម្ងាយតាមទូរស័ព្ទដៃ មិនមែនតែដោយដៃផ្ទាល់ (수동으로만) ឡើយ ដូច្នេះជម្រើសទី ១ គឺខុស (ដែលជាចម្លើយត្រូវ)។",
+                vocab: [
+                    { korean: "수동", reading: "ស៊ូ-ដុង", translation: "ដោយដៃផ្ទាល់ (Manual) ផ្ទុយពី 자동 (ស្វ័យប្រវត្តិ)" },
+                    { korean: "변화시키다", reading: "ផ្យន់-ហ្វា-ស៊ី-ឃី-ដា", translation: "ធ្វើឱ្យផ្លាស់ប្តូរ" }
+                ]
+            },
+            {
+                id: 25,
+                category: "Reading",
+                categoryKhmer: "ការអានយល់ន័យ",
+                passage: "최근 과학 기술의 발달로 집 안의 모든 전자기기를 인터넷으로 연결하여 스마트폰으로 쉽게 제어하는 '스마트 홈'이 늘어나고 있습니다. 외출 중에도 가스밸브를 안전하게 잠그거나 에어컨을 미리 켜 둘 수 있어서 매우 편리합니다. 또한, 스마트 홈은 사용자의 평소 생활 패턴을 인공지능이 분석하여 최적의 온도와 환경을 자동으로 제공해 줍니다. 앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.",
+                question: "필자가 예측하는 '스마트 홈 기술의 미래'는 어떠합니까?",
+                translation: "តើអនាគតនៃបច្ចេកវិទ្យា Smart Home នឹងទៅជាយ៉ាងណា តាមការប៉ាន់ស្មានរបស់អ្នកនិពន្ធ?",
+                reading: "ភីល-ចា-ហ្កា យេ-ឆឹក-ហា-នឺន 'ស៊ឺ-ម៉ា-ថឺ ហូម គី-ស៊ុល-រី មី-រេ'-នឺន អរ-តរ-ហាំ-នី-កា?",
+                options: ["인류의 삶을 더욱 스마트하게 변화시킬 것이다.", "인터넷이 끊겨 쓸모없어질 것이다.", "에너지 낭비가 심해져 사라질 것이다.", "예전의 아궁이 난방 방식으로 돌아갈 것이다."],
+                optionsTrans: ["វានឹងធ្វើឱ្យជីវិតមនុស្សកាន់តែមានភាពឆ្លាតវៃ និងទំនើបជាងមុន។", "វានឹងលែងមានប្រយោជន៍ដោយសារការដាច់អ៊ីនធឺណិត។", "វានឹងរលាយបាត់ទៅវិញដោយសារតែការខ្ជះខ្ជាយថាមពលខ្លាំងពេក។", "វានឹងត្រឡប់ទៅរកការប្រើប្រាស់ចង្ក្រានកម្តៅបែបបុរាណវិញ។"],
+                answer: 0,
+                explanation: "ប្រយោគចុងក្រោយបញ្ជាក់យ៉ាងច្បាស់ថា '앞으로 이 기술은 인류의 삶을 더욱 스마트하게 변화시킬 것입니다.' ដូច្នេះចម្លើយទី ១ គឺត្រឹមត្រូវបំផុត។",
+                vocab: [
+                    { korean: "예측하다", reading: "យេ-ឆឹក-ហា-ដា", translation: "ប៉ាន់ស្មាន/ទស្សន៍ទាយ" },
+                    { korean: "미래", reading: "មី-រេ", translation: "អនាគត" }
+                ]
+            },
+
+            // PART 3: KOREAN CULTURE & SOCIAL KNOWLEDGE (Q26 - Q30)
+            // FOCUS: ONDOL (온돌) - PAGE 46
+            {
+                id: 26,
+                category: "Culture",
+                categoryKhmer: "វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ",
+                question: "한국의 전통 난방 방식으로, 아궁이에 불을 때서 방바닥 밑의 돌을 데워 방 전체를 따뜻하게 만드는 시스템은 무엇입니까?",
+                translation: "តើអ្វីជាប្រព័ន្ធកម្តៅបែបប្រពៃណីរបស់កូរ៉េ ដែលដុតភ្លើងក្នុងចង្ក្រានដើម្បីកម្តៅថ្មនៅក្រោមបាតឥដ្ឋ ដើម្បីធ្វើឱ្យបន្ទប់ទាំងមូលមានភាពកក់ក្តៅ?",
+                reading: "ហាន-ហ្គុក-គី ជុន-ថុង ណាន-បាំង បាំង-ស៊ីក-គឹ-រ៉ូ, អា-គុង-អ៊ី-អេ ភុល-រ៉ឺល ទេ-សរ... មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["온돌", "에어컨", "온수 매트", "벽난로"],
+                optionsTrans: ["អ៊ុនដុល (Ondol / ឥដ្ឋកម្តៅបែបប្រពៃណី)", "ម៉ាស៊ីនត្រជាក់", "ពូកទឹកក្តៅ", "ចង្ក្រានកម្តៅជាប់ជញ្ជាំង (បែបបស្ចិមប្រទេស)"],
+                answer: 0,
+                explanation: "អ៊ុនដុល (온돌) គឺជាបច្ចេកវិទ្យាកម្តៅក្រោមបាតឥដ្ឋដ៏ល្បីល្បាញរបស់កូរ៉េតាំងពីបុរាណកាល ដែលប្រើប្រាស់គោលការណ៍នាំកម្តៅ និងចរន្តកម្តៅ។",
+                vocab: [
+                    { korean: "전통 난방", reading: "ជុន-ថុង ណាន-បាំង", translation: "ប្រព័ន្ធកម្តៅបែបប្រពៃណី" },
+                    { korean: "아궁이", reading: "អា-គុង-អ៊ី", translation: "ចង្ក្រានដុតអុសសម្រាប់កម្តៅផ្ទះ និងដាំស្ល" },
+                    { korean: "온돌", reading: "អ៊ុន-ដុល", translation: "ប្រព័ន្ធកម្តៅបាតឥដ្ឋ (Ondol)" }
+                ]
+            },
+            {
+                id: 27,
+                category: "Culture",
+                categoryKhmer: "វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ",
+                question: "전통 온돌의 구조에서 불을 때는 장소이자 음식을 만들던 가마솥이 올려져 있는 곳은 어디입니까?",
+                translation: "នៅក្នុងរចនាសម្ព័ន្ធនៃប្រព័ន្ធអ៊ុនដុលបុរាណ តើកន្លែងដុតភ្លើង និងជាកន្លែងដាក់ឆ្នាំងធំៗសម្រាប់ធ្វើអាហារហៅថាអ្វី?",
+                reading: "ជុន-ថុង អ៊ុន-ដុល-រី គូ-ចូ-អេសរ ភុល-រ៉ឺល ទេ-នឺន ចាំង-សូ-អ៊ី-ចា... អរ-ឌី-អិម-នី-កា?",
+                options: ["아궁이", "구들장", "굴뚝", "고래"],
+                optionsTrans: ["អាកុងអ៊ី (ចង្ក្រានដុតភ្លើង / 아궁이)", "គូឌុលចាំង (ផ្ទាំងថ្មកម្តៅក្រោមឥដ្ឋ / 구들장)", "គុលតុប (បំពង់ផ្សែង / 굴뚝)", "កូរ៉េ (ផ្លូវផ្សែងរត់ក្រោមឥដ្ឋ / 고래)"],
+                answer: 0,
+                explanation: "អា궁ី (아궁이) គឺជាចង្ក្រានដុតភ្លើងនៅផ្នែកខាងក្រោមនៃផ្ទះ ដែលផ្សារភ្ជាប់ទៅនឹងផ្លូវផ្សែងក្រោមផ្ទះដើម្បីកម្តៅ និងសម្រាប់ដាំស្លអាហារផងដែរ។",
+                vocab: [
+                    { korean: "가마솥", reading: "កា-ម៉ា-ស៊ុត", translation: "ឆ្នាំងដែកធំៗបែបបុរាណកូរ៉េ" },
+                    { korean: "구조", reading: "គូ-ចូ", translation: "រចនាសម្ព័ន្ធ" }
+                ]
+            },
+            {
+                id: 28,
+                category: "Culture",
+                categoryKhmer: "វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ",
+                question: "온돌의 과학적 원리는 뜨거워진 돌의 열이 바닥을 통해 전달되는 (      )와/과 따뜻해진 공기가 위로 올라가는 (      ) 현상을 이용한 것입니다.",
+                translation: "គោលការណ៍វិទ្យាសាស្ត្ររបស់ប្រព័ន្ធអ៊ុនដុល គឺការប្រើប្រាស់បាតុភូត (      ) ដែលកម្តៅពីថ្មក្តៅឆ្លងកាត់បាតឥដ្ឋ និងបាតុភូត (      ) ដែលខ្យល់ក្តៅអណ្តែតឡើងទៅលើ។",
+                reading: "អ៊ុន-ដុល-រី ក្វា-ហាក់-ចុក វ៉ុន-រី-នឺន... យ៉ល-រី បា-ដាក-គឹល ថុង-ហេ ជុន-ដាល-ឌេ-នឺន (      )វ៉ា (      ) ហ្យន់-សាំង-អ៊ឺល អ៊ី-រ្យុង-ហាន កូ-ស៊ឹម-នី-ដា។",
+                options: ["열전도, 대류", "복사, 단열", "단열, 전도", "대류, 복사"],
+                optionsTrans: ["ការនាំកម្តៅ (Conduction) , ការចរន្តកម្តៅ (Convection)", "ការបញ្ចេញកម្តៅ , ការទប់កម្តៅ", "ការទប់កម្តៅ , ការនាំកម្តៅ", "ការចរន្តកម្តៅ , ការបញ្ចេញកម្តៅ"],
+                answer: 0,
+                explanation: "អ៊ុនដុលដំណើរការដោយ '열전도' (កម្តៅផ្ទេរពីថ្មមកបាតឥដ្ឋ) និង '대류' (ខ្យល់ក្តៅពីបាតអណ្តែតឡើងលើដើម្បីឱ្យបន្ទប់ទាំងមូលក្តៅស្មើគ្នា)។",
+                vocab: [
+                    { korean: "열전도", reading: "យ៉ល-ជុន-ដូ", translation: "ការនាំកម្តៅ (Heat Conduction)" },
+                    { korean: "대류", reading: "ទេ-រ្យូ", translation: "ការចរន្តកម្តៅ (Convection)" },
+                    { korean: "공기", reading: "ខុង-គី", translation: "ខ្យល់/បរិយាកាស" }
+                ]
+            },
+            {
+                id: 29,
+                category: "Culture",
+                categoryKhmer: "វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ",
+                question: "온돌 문화의 영향으로 한국인들이 집 안에서 신발을 벗고 바닥에 앉거나 눕는 삶을 선호하게 된 일상생활의 문화를 무엇이라고 합니까?",
+                translation: "តើវប្បធម៌រស់នៅប្រចាំថ្ងៃបែបណា ដែលជនជាតិកូរ៉ែចូលចិត្តដោះស្បែកជើង អង្គុយ ឬគេងផ្ទាល់លើបាតឥដ្ឋកក់ក្តៅ ដោយសារតែឥទ្ធិពលនៃប្រព័ន្ធអ៊ុនដុល?",
+                reading: "អ៊ុន-ដុល មុន-ហ្វា-អ៊ី យ៉ុង-ហ្យាំង-អ៊ឺ-រ៉ូ ហាន-ហ្គុក-អ៊ីន-ឌឺ-រី... បា-ដាក-គេ អាន-ជឺ-ម្យ៉ន... មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["좌식 문화", "입식 문화", "서구식 문화", "대중문화"],
+                optionsTrans: ["វប្បធម៌រស់នៅផ្ទាល់លើកម្រាលឥដ្ឋ (Jwasik-sitting culture)", "វប្បធម៌រស់នៅលើកៅអី/គ្រែ (Ipsik)", "វប្បធម៌រស់នៅបែបបស្ចិមប្រទេស", "វប្បធម៌ពេញនិយម/សម័យថ្មី"],
+                answer: 0,
+                explanation: "ដោយសារបាតឥដ្ឋមានភាពកក់ក្តៅ ជនជាតិកូរ៉េតាំងពីបុរាណចូលចិត្តអង្គុយ និងគេងផ្ទាល់លើឥដ្ឋ ដែលបង្កើតបានជា '좌식 문화' (វប្បធម៌អង្គុយផ្ទាល់លើឥដ្ឋ)។",
+                vocab: [
+                    { korean: "신발을 벗다", reading: "ស៊ីន-បាល-រ៉ឺល បុត-ដា", translation: "ដោះស្បែកជើង" },
+                    { korean: "좌식 문화", reading: "ជ្វា-ស៊ីក មុន-ហ្វា", translation: "វប្បធម៌អង្គុយលើកម្រាលផ្ទាល់" },
+                    { korean: "선호하다", reading: "ស៊ុន-ហូ-ហា-ដា", translation: "ពេញចិត្ត/ចូលចិត្តជាង" }
+                ]
+            },
+            {
+                id: 30,
+                category: "Culture",
+                categoryKhmer: "វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ",
+                question: "한국의 현대식 아파트나 주택에서 쓰이는 현대화된 온돌 방식은 무엇입니까?",
+                translation: "តើប្រព័ន្ធអ៊ុនដុលបែបទំនើបដែលគេប្រើប្រាស់ក្នុងផ្ទះ ឬខុនដូ (Apartment) របស់កូរ៉េបច្ចុប្បន្នជាអ្វី?",
+                reading: "ហាន-ហ្គុក-គី ហ្យន់-ដេ-ស៊ីក អា-ផា-ថឺ-ណា ជូ-ថែក-កេសរ ស៊ឺ-អ៊ី-នឺន ហ្យន់-ដេ-ហ្វា-ឌេន អ៊ុន-ដុល បាំង-ស៊ីក-គឹន មូ-អរ-ស៊ីម-នី-កា?",
+                options: ["바닥 밑에 온수 파이프를 설치하여 데우는 보일러 방식", "방 안에 거대한 나무 난로를 설치하는 방식", "천장에 가스 난방기를 직접 다는 방식", "전기 히터만 하루 종일 틀어놓는 방식"],
+                optionsTrans: ["ប្រព័ន្ធម៉ាស៊ីនកម្តៅ (Boiler) ដែលរត់ទ่อน้ำក្តៅនៅក្រោមបាតឥដ្ឋ", "ការដាក់ចង្ក្រានអុសដ៏ធំមួយចំកណ្តាលបន្ទប់", "ការតម្លើងម៉ាស៊ីនកម្តៅហ្គាសផ្ទាល់នៅលើពិដាន", "ការបើកកង្ហារកម្តៅអគ្គិសនីចោលពេញមួយថ្ងៃ"],
+                answer: 0,
+                explanation: "បច្ចុប្បន្ន គេលែងប្រើចង្ក្រានអុសបុរាណទៀតហើយ តែគេបានអភិវឌ្ឍប្រព័ន្ធ '보일러' (Boiler) រត់ទ่อน้ำក្តៅ (온수 파이프) ក្រោមបាតឥដ្ឋ ដែលស្អាត សុវត្ថិភាព និងរក្សាគោលការណ៍អ៊ុនដុលដដែល។",
+                vocab: [
+                    { korean: "온수 파이프", reading: "អ៊ុន-ស៊ូ ផា-អ៊ី-ភឺ", translation: "ទ่อน้ำក្តៅ (Hot water pipes)" },
+                    { korean: "보일러", reading: "បូ-អ៊ីល-ឡឺ", translation: "ម៉ាស៊ីនកម្តៅ/Boiler" },
+                    { korean: "설치하다", reading: "ស៊ុល-ឈី-ហា-ដា", translation: "តម្លើង/បំពាក់" }
+                ]
+            }
+        ];
+
+        // State Manager for the Quiz App
+        const quizState = {
+            currentQuestionIndex: 0,
+            score: 0,
+            answered: false,
+            selectedAnswer: null,
+            eliminatedOptions: [],
+            powerupsUsedThisQuestion: {
+                translateQuestion: false,
+                fiftyFifty: false,
+                translateAnswers: false
+            },
+            powerupsRemaining: {
+                translateQuestion: 5,
+                fiftyFifty: 5,
+                translateAnswers: 5
+            },
+            userAnswers: [],
+            isPlayingAudio: false,
+            audioSequence: [],
+            audioIndex: 0,
+            audioElement: null
+        };
+
+        // UI Language Switch
+        const uiText = {
+            km: {
+                checkAnswer: "ពិនិត្យចម្លើយ",
+                nextQuestion: "សំណួរបន្ទាប់",
+                viewResult: "មើលលទ្ធផលតេស្ត",
+                correct: "ត្រឹមត្រូវ! 🎉",
+                incorrect: "ខុសហើយ! 😢",
+                explanation: "ការពន្យល់លម្អិត៖",
+                vocabTitle: "បំបែកពាក្យសព្ទគន្លឹះ៖",
+                vocabReading: "អាន៖",
+                reviewTitle: "ឆែកមើលចម្លើយឡើងវិញ",
+                restart: "ធ្វើតេស្តឡើងវិញ",
+                congratulations: "អបអរសាទរ! អ្នកបានបញ្ចប់តេស្តហើយ។",
+                scoreText: "ពិន្ទុរបស់អ្នកគឺ៖"
+            }
+        };
+
+        // Dual Engine TTS Audio Functionality
+        const audioController = {
+            speak: function(text, lang, callback) {
+                // Rule 3: Android Interface priority
+                if (typeof Android !== 'undefined' && Android.speak) {
+                    Android.speak(text);
+                    if (callback) setTimeout(callback, 2000);
+                    return;
+                }
+
+                // Fallback to Web Speech API or Google Translate TTS
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = lang === 'ko' ? 'ko-KR' : 'km-KH';
+                    utterance.rate = lang === 'ko' ? 0.82 : 0.88; // easy pace for learners
+
+                    utterance.onend = function() {
+                        if (callback) callback();
+                    };
+                    utterance.onerror = function() {
+                        // Google fallback if local synthesis fails
+                        audioController.speakGoogleTTS(text, lang, callback);
+                    };
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    audioController.speakGoogleTTS(text, lang, callback);
+                }
+            },
+
+            speakGoogleTTS: function(text, lang, callback) {
+                if (quizState.audioElement) {
+                    quizState.audioElement.pause();
+                }
+                const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(text)}`;
+                quizState.audioElement = new Audio(url);
+                quizState.audioElement.play().then(() => {
+                    quizState.audioElement.onended = function() {
+                        if (callback) callback();
+                    };
+                }).catch(e => {
+                    console.log("Audio failed. CORS block or offline.", e);
+                    if (callback) callback();
+                });
+            },
+
+            stop: function() {
+                if (typeof Android !== 'undefined' && Android.speak) {
+                    // Android handles its own speech lifecycle
+                } else if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+                if (quizState.audioElement) {
+                    quizState.audioElement.pause();
+                }
+                quizState.isPlayingAudio = false;
+                const btn = document.getElementById("btnAudioPlay");
+                if (btn) {
+                    btn.classList.remove("playing");
+                    btn.innerHTML = `🔈 ស្តាប់ការអាន`;
+                }
+            },
+
+            toggleQuestionSpeech: function(koreanText, khmerText) {
+                if (quizState.isPlayingAudio) {
+                    this.stop();
+                    return;
+                }
+
+                quizState.isPlayingAudio = true;
+                const btn = document.getElementById("btnAudioPlay");
+                if (btn) btn.classList.add("playing");
+
+                // TTS Sequence: First read Korean clearly, then Cambodian translation
+                btn.innerHTML = `🔊 កំពុងអានភាសាកូរ៉េ...`;
+                this.speak(koreanText, 'ko', () => {
+                    if (!quizState.isPlayingAudio) return;
+                    btn.innerHTML = `🔊 កំពុងអានភាសាខ្មែរ...`;
+                    this.speak(khmerText, 'km', () => {
+                        this.stop();
+                    });
+                });
+            }
+        };
+
+        // Quiz Manager Engine
+        const quizManager = {
+            init: function() {
+                quizState.currentQuestionIndex = 0;
+                quizState.score = 0;
+                quizState.userAnswers = [];
+                quizState.powerupsUsedThisQuestion = {
+                    translateQuestion: false,
+                    fiftyFifty: false,
+                    translateAnswers: false
+                };
+                this.resetPowerupsCount();
+                this.renderQuestion();
+            },
+
+            resetPowerupsCount: function() {
+                quizState.powerupsRemaining = {
+                    translateQuestion: 5,
+                    fiftyFifty: 5,
+                    translateAnswers: 5
+                };
+            },
+
+            renderQuestion: function() {
+                audioController.stop();
+                quizState.answered = false;
+                quizState.selectedAnswer = null;
+                quizState.eliminatedOptions = [];
+                quizState.powerupsUsedThisQuestion = {
+                    translateQuestion: false,
+                    fiftyFifty: false,
+                    translateAnswers: false
+                };
+
+                const currentScoreEl = document.getElementById("currentScore");
+                if (currentScoreEl) currentScoreEl.innerText = quizState.score;
+
+                const q = quizQuestions[quizState.currentQuestionIndex];
+                const view = document.getElementById("viewContainer");
+
+                let html = `
+                    <div class="card">
+                        <div class="question-meta">ផ្នែកទី ${q.category === 'VocabGrammar' ? '1' : q.category === 'Reading' ? '2' : '3'}: ${q.categoryKhmer} (សំណួរទី ${q.id})</div>
+                        
+                        <!-- Show passage for reading questions -->
+                        ${q.passage ? `
+                            <div class="passage-box">
+                                <strong>[អត្ថបទសម្រាប់អាន]</strong><br>
+                                <div style="margin-top: 8px;">${q.passage}</div>
+                                
+                                <div id="passageTranslation" class="passage-translation" style="display: none;">
+                                    ${q.passageTrans}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Diagram for Ondol in Culture section -->
+                        ${q.id === 28 ? `
+                            <div class="diagram-container">
+                                <div class="diagram-row">
+                                    <span>🔥 ចង្ក្រានដុតអុស (아궁이)</span>
+                                    <span>➡️</span>
+                                    <span class="diagram-badge">កម្តៅបាតឥដ្ឋ (구들장) [នាំកម្តៅ/Conduction]</span>
+                                </div>
+                                <div class="diagram-row">
+                                    <span>💨 ខ្យល់ក្តៅអណ្តែតឡើង (대류)</span>
+                                    <span>➡️</span>
+                                    <span class="diagram-badge">បន្ទប់ទាំងមូលកក់ក្តៅ [ចរន្តកម្តៅ/Convection]</span>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <h2 class="question-title">${q.question}</h2>
+                        
+                        <!-- Helper Translation & Reading guides (Initially hidden) -->
+                        <div id="questionTranslation" class="translation-box" style="display: none;">
+                            <strong>ខ្មែរ៖</strong> ${q.translation}
+                        </div>
+                        <div id="questionReading" class="reading-box" style="display: none;">
+                            <strong>អាន៖</strong> ${q.reading}
+                        </div>
+
+                        <!-- Speaker controller -->
+                        <div class="audio-container">
+                            <button id="btnAudioPlay" class="btn-audio" onclick="audioController.toggleQuestionSpeech('${q.question.replace(/'/g, "\\'")}', '${q.translation.replace(/'/g, "\\'")}')">
+                                🔈 ស្តាប់ការអាន
+                            </button>
+                        </div>
+
+                        <!-- Game Powerups Panel -->
+                        <div class="powerups-grid">
+                            <button id="powerupTranslate" class="btn-powerup" onclick="quizManager.usePowerup('translateQuestion')">
+                                🗺️ បកប្រែសំណួរ
+                                <span class="powerup-count">${quizState.powerupsRemaining.translateQuestion}</span>
+                            </button>
+                            <button id="powerup5050" class="btn-powerup" onclick="quizManager.usePowerup('fiftyFifty')">
+                                ✂️ កាត់ ៥០/៥០
+                                <span class="powerup-count">${quizState.powerupsRemaining.fiftyFifty}</span>
+                            </button>
+                            <button id="powerupTranslateAnswers" class="btn-powerup" onclick="quizManager.usePowerup('translateAnswers')">
+                                👁️ បកប្រែចម្លើយ
+                                <span class="powerup-count">${quizState.powerupsRemaining.translateAnswers}</span>
+                            </button>
+                        </div>
+
+                        <!-- Options List -->
+                        <div class="options-list" id="optionsList">
+                            ${q.options.map((option, index) => `
+                                <button class="btn-option" id="opt_${index}" onclick="quizManager.selectOption(${index})">
+                                    <span class="option-text"><strong>${index + 1}.</strong> ${option}</span>
+                                    <span class="option-translation" id="optTrans_${index}" style="display: none;">
+                                        ${q.optionsTrans[index]}
+                                    </span>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <!-- Smart Reveal Block (Explorations & Vocabulary) -->
+                        <div id="revealSection" class="reveal-section" style="display: none;">
+                            <div class="explanation-title">💡 ${uiText.km.explanation}</div>
+                            <p class="explanation-text">${q.explanation}</p>
+
+                            <div class="explanation-title">📚 ${uiText.km.vocabTitle}</div>
+                            <div class="vocab-breakdown">
+                                ${q.vocab.map(item => `
+                                    <div class="vocab-item">
+                                        <span class="vocab-korean">${item.korean}</span>
+                                        <span class="vocab-details">(${uiText.km.vocabReading} ${item.reading}) : ${item.translation}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                view.innerHTML = html;
+
+                // Reset Action Button
+                const actionBtn = document.getElementById("btnAction");
+                actionBtn.innerText = "ពិនិត្យចម្លើយ";
+                actionBtn.disabled = true;
+            },
+
+            usePowerup: function(type) {
+                if (quizState.answered) return;
+                if (quizState.powerupsRemaining[type] <= 0) return;
+
+                const q = quizQuestions[quizState.currentQuestionIndex];
+
+                if (type === 'translateQuestion') {
+                    quizState.powerupsUsedThisQuestion.translateQuestion = true;
+                    document.getElementById("questionTranslation").style.display = "block";
+                    document.getElementById("questionReading").style.display = "block";
+                    if (q.passage) {
+                        const passTrans = document.getElementById("passageTranslation");
+                        if (passTrans) passTrans.style.display = "block";
+                    }
+                    document.getElementById("powerupTranslate").classList.add("active");
+                } 
+                else if (type === 'fiftyFifty') {
+                    if (quizState.powerupsUsedThisQuestion.fiftyFifty) return;
+                    quizState.powerupsUsedThisQuestion.fiftyFifty = true;
+                    
+                    // Eliminate two incorrect answers
+                    let incorrectIndices = [];
+                    for (let i = 0; i < 4; i++) {
+                        if (i !== q.answer) incorrectIndices.push(i);
+                    }
+                    // Shuffle incorrect indices and pick 2
+                    incorrectIndices.sort(() => Math.random() - 0.5);
+                    quizState.eliminatedOptions = [incorrectIndices[0], incorrectIndices[1]];
+
+                    quizState.eliminatedOptions.forEach(idx => {
+                        const optBtn = document.getElementById(`opt_${idx}`);
+                        if (optBtn) optBtn.classList.add("eliminated");
+                    });
+
+                    document.getElementById("powerup5050").classList.add("active");
+                } 
+                else if (type === 'translateAnswers') {
+                    quizState.powerupsUsedThisQuestion.translateAnswers = true;
+                    for (let i = 0; i < 4; i++) {
+                        const trans = document.getElementById(`optTrans_${i}`);
+                        if (trans) trans.style.display = "block";
+                    }
+                    document.getElementById("powerupTranslateAnswers").classList.add("active");
+                }
+
+                quizState.powerupsRemaining[type]--;
+                this.updatePowerupButtons();
+            },
+
+            updatePowerupButtons: function() {
+                const pTrans = document.getElementById("powerupTranslate");
+                const p50 = document.getElementById("powerup5050");
+                const pAns = document.getElementById("powerupTranslateAnswers");
+
+                if (pTrans) {
+                    pTrans.querySelector(".powerup-count").innerText = quizState.powerupsRemaining.translateQuestion;
+                    if (quizState.powerupsRemaining.translateQuestion <= 0) pTrans.disabled = true;
+                }
+                if (p50) {
+                    p50.querySelector(".powerup-count").innerText = quizState.powerupsRemaining.fiftyFifty;
+                    if (quizState.powerupsRemaining.fiftyFifty <= 0 || quizState.powerupsUsedThisQuestion.fiftyFifty) p50.disabled = true;
+                }
+                if (pAns) {
+                    pAns.querySelector(".powerup-count").innerText = quizState.powerupsRemaining.translateAnswers;
+                    if (quizState.powerupsRemaining.translateAnswers <= 0) pAns.disabled = true;
+                }
+            },
+
+            selectOption: function(index) {
+                if (quizState.answered) return;
+                if (quizState.eliminatedOptions.includes(index)) return;
+
+                // Clear previous selections
+                for (let i = 0; i < 4; i++) {
+                    const opt = document.getElementById(`opt_${i}`);
+                    if (opt) opt.style.borderColor = "rgba(148, 163, 184, 0.15)";
+                }
+
+                // Highlight selected
+                const selectedOpt = document.getElementById(`opt_${index}`);
+                if (selectedOpt) {
+                    selectedOpt.style.borderColor = "var(--primary-color)";
+                }
+
+                quizState.selectedAnswer = index;
+                document.getElementById("btnAction").disabled = false;
+            },
+
+            handleAction: function() {
+                if (!quizState.answered) {
+                    this.checkAnswer();
+                } else {
+                    this.nextQuestion();
+                }
+            },
+
+            checkAnswer: function() {
+                quizState.answered = true;
+                audioController.stop();
+
+                const q = quizQuestions[quizState.currentQuestionIndex];
+                const isCorrect = quizState.selectedAnswer === q.answer;
+
+                // Save answer for final review
+                quizState.userAnswers.push({
+                    questionId: q.id,
+                    selected: quizState.selectedAnswer,
+                    correct: q.answer,
+                    isCorrect: isCorrect
+                });
+
+                if (isCorrect) {
+                    quizState.score++;
+                    document.getElementById(`opt_${quizState.selectedAnswer}`).classList.add("correct");
+                    audioController.speak("맞았습니다!", "ko");
+                } else {
+                    document.getElementById(`opt_${quizState.selectedAnswer}`).classList.add("incorrect");
+                    document.getElementById(`opt_${q.answer}`).classList.add("correct");
+                    audioController.speak("틀렸습니다.", "ko");
+                }
+
+                // Rule 5: Show translations dynamically upon answering
+                document.getElementById("questionTranslation").style.display = "block";
+                document.getElementById("questionReading").style.display = "block";
+                if (q.passage) {
+                    const passTrans = document.getElementById("passageTranslation");
+                    if (passTrans) passTrans.style.display = "block";
+                }
+
+                for (let i = 0; i < 4; i++) {
+                    const trans = document.getElementById(`optTrans_${i}`);
+                    if (trans) trans.style.display = "block";
+                }
+
+                // Display detailed explanation
+                document.getElementById("revealSection").style.display = "block";
+
+                // Update Action Button
+                const actionBtn = document.getElementById("btnAction");
+                if (quizState.currentQuestionIndex < quizQuestions.length - 1) {
+                    actionBtn.innerText = uiText.km.nextQuestion;
+                } else {
+                    actionBtn.innerText = uiText.km.viewResult;
+                }
+            },
+
+            nextQuestion: function() {
+                if (quizState.currentQuestionIndex < quizQuestions.length - 1) {
+                    quizState.currentQuestionIndex++;
+                    this.renderQuestion();
+                } else {
+                    this.showResult();
+                }
+            },
+
+            showResult: function() {
+                audioController.stop();
+                const view = document.getElementById("viewContainer");
+                const actionBtn = document.getElementById("btnAction");
+                
+                // Hide main action button
+                actionBtn.style.display = "none";
+
+                // Set score on top bar
+                document.getElementById("currentScore").innerText = quizState.score;
+
+                // Custom evaluation message
+                let evalMsg = "";
+                if (quizState.score === 30) evalMsg = "ពិន្ទុល្អឥតខ្ចោះ! អ្នកជាកំពូលអ្នកប្រាជ្ញវិទ្យាសាស្ត្រកូរ៉េ! 🏆";
+                else if (quizState.score >= 25) evalMsg = "ល្អណាស់! សមត្ថភាពរបស់អ្នកត្រៀមប្រឡង 중간평가 បានយ៉ាងងាយស្រួល! 🌟";
+                else if (quizState.score >= 18) evalMsg = "ល្អបង្គួរ! សូមបន្តព្យាយាមបន្ថែមទៀតដើម្បីទទួលបានលទ្ធផលកាន់តែប្រសើរ! 👍";
+                else evalMsg = "ព្យាយាមឡើងវិញ! កុំបោះបង់ ការរៀនសូត្រនឹងធ្វើឱ្យអ្នកកាន់តែខ្លាំង! 💪";
+
+                let html = `
+                    <div class="card result-view">
+                        <div class="result-circle">
+                            <span class="result-score">${quizState.score}</span>
+                            <span style="font-size: 14px; font-weight: 700; color: var(--text-secondary);">ភាគរយ: ${Math.round((quizState.score/30)*100)}%</span>
+                        </div>
+                        <h2 class="result-text">${uiText.km.congratulations}</h2>
+                        <p class="result-desc">${evalMsg}</p>
+
+                        <!-- Review answers header -->
+                        <h3 style="font-size: 16px; font-weight: 700; margin-top: 20px; border-bottom: 2px solid rgba(148,163,184,0.1); padding-bottom: 8px;">
+                            📋 ${uiText.km.reviewTitle}
+                        </h3>
+
+                        <div class="review-list">
+                            ${quizState.userAnswers.map((ua, index) => {
+                                const q = quizQuestions[index];
+                                return `
+                                    <div class="review-item ${ua.isCorrect ? 'correct' : 'incorrect'}">
+                                        <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px; display:flex; justify-content:space-between;">
+                                            <span>សំណួរទី ${q.id} (${q.categoryKhmer})</span>
+                                            <span style="color: ${ua.isCorrect ? 'var(--correct-color)' : 'var(--incorrect-color)'};">
+                                                ${ua.isCorrect ? '✔️ ត្រូវ' : '❌ ខុស'}
+                                            </span>
+                                        </div>
+                                        <div style="font-size: 13px; margin-bottom: 4px; color: var(--text-color);">${q.question}</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            ចម្លើយរបស់អ្នក៖ <strong style="color: var(--primary-color);">${q.options[ua.selected]}</strong> | 
+                                            ចម្លើយត្រូវ៖ <strong style="color: var(--correct-color);">${q.options[ua.correct]}</strong>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Action Controls inside Result -->
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button class="btn-action" style="background-color: var(--primary-color);" onclick="quizManager.init()">
+                                🔄 ${uiText.km.restart}
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                view.innerHTML = html;
+            }
+        };
+
+        // Window load initialization
+        window.onload = function() {
+            // Respect light/dark mode Android triggers
+            if (typeof Android !== 'undefined' && Android.isDarkMode && Android.isDarkMode()) {
+                document.body.classList.remove("light-mode");
+            } else {
+                // Default to dark mode unless requested
+            }
+            quizManager.init();
+        };
+    </script>
+</body>
+</html>
